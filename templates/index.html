@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Occupancy Estimation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Room Occupancy Estimation</h2>
+        <p class="text-center">Please input the required sensor data to predict the room occupancy count.</p>
+
+        <form method="POST" action="/predict">
+            <!-- Time Input with placeholder showing format -->
+            <div class="mb-3">
+                <label for="Time" class="form-label">Time (HH:MM:SS)</label>
+                <input type="text" class="form-control" id="Time" name="Time" placeholder="e.g., 12:30:00 (HH:MM:SS)" required>
+            </div>
+
+            <!-- Temperature Inputs with example values and units in placeholder -->
+            <div class="mb-3">
+                <label for="S1_Temp" class="form-label">S1 Temperature</label>
+                <input type="number" step="any" class="form-control" id="S1_Temp" name="S1_Temp" placeholder="e.g., 22.5 (°C)" required>
+            </div>
+            <div class="mb-3">
+                <label for="S2_Temp" class="form-label">S2 Temperature</label>
+                <input type="number" step="any" class="form-control" id="S2_Temp" name="S2_Temp" placeholder="e.g., 23.1 (°C)" required>
+            </div>
+            <div class="mb-3">
+                <label for="S3_Temp" class="form-label">S3 Temperature</label>
+                <input type="number" step="any" class="form-control" id="S3_Temp" name="S3_Temp" placeholder="e.g., 21.8 (°C)" required>
+            </div>
+            <div class="mb-3">
+                <label for="S4_Temp" class="form-label">S4 Temperature</label>
+                <input type="number" step="any" class="form-control" id="S4_Temp" name="S4_Temp" placeholder="e.g., 22.9 (°C)" required>
+            </div>
+
+            <!-- Light Inputs with example values and units in placeholder -->
+            <div class="mb-3">
+                <label for="S1_Light" class="form-label">S1 Light</label>
+                <input type="number" step="any" class="form-control" id="S1_Light" name="S1_Light" placeholder="e.g., 300 (Lux)" required>
+            </div>
+            <div class="mb-3">
+                <label for="S2_Light" class="form-label">S2 Light</label>
+                <input type="number" step="any" class="form-control" id="S2_Light" name="S2_Light" placeholder="e.g., 450 (Lux)" required>
+            </div>
+            <div class="mb-3">
+                <label for="S3_Light" class="form-label">S3 Light</label>
+                <input type="number" step="any" class="form-control" id="S3_Light" name="S3_Light" placeholder="e.g., 500 (Lux)" required>
+            </div>
+            <div class="mb-3">
+                <label for="S4_Light" class="form-label">S4 Light</label>
+                <input type="number" step="any" class="form-control" id="S4_Light" name="S4_Light" placeholder="e.g., 400 (Lux)" required>
+            </div>
+
+            <!-- Sound Inputs with example values and units in placeholder -->
+            <div class="mb-3">
+                <label for="S1_Sound" class="form-label">S1 Sound</label>
+                <input type="number" step="any" class="form-control" id="S1_Sound" name="S1_Sound" placeholder="e.g., 45.0 (dB)" required>
+            </div>
+            <div class="mb-3">
+                <label for="S2_Sound" class="form-label">S2 Sound</label>
+                <input type="number" step="any" class="form-control" id="S2_Sound" name="S2_Sound" placeholder="e.g., 47.5 (dB)" required>
+            </div>
+            <div class="mb-3">
+                <label for="S3_Sound" class="form-label">S3 Sound</label>
+                <input type="number" step="any" class="form-control" id="S3_Sound" name="S3_Sound" placeholder="e.g., 44.2 (dB)" required>
+            </div>
+            <div class="mb-3">
+                <label for="S4_Sound" class="form-label">S4 Sound</label>
+                <input type="number" step="any" class="form-control" id="S4_Sound" name="S4_Sound" placeholder="e.g., 46.3 (dB)" required>
+            </div>
+
+            <!-- CO2 Inputs with example values and units in placeholder -->
+            <div class="mb-3">
+                <label for="S5_CO2" class="form-label">S5 CO2</label>
+                <input type="number" step="any" class="form-control" id="S5_CO2" name="S5_CO2" placeholder="e.g., 420 (ppm)" required>
+            </div>
+            <div class="mb-3">
+                <label for="S5_CO2_Slope" class="form-label">S5 CO2 Slope</label>
+                <input type="number" step="any" class="form-control" id="S5_CO2_Slope" name="S5_CO2_Slope" placeholder="e.g., 0.5 (ppm/slope)" required>
+            </div>
+
+            <!-- PIR Inputs with example values and units in placeholder -->
+            <div class="mb-3">
+                <label for="S6_PIR" class="form-label">S6 PIR</label>
+                <input type="number" step="any" class="form-control" id="S6_PIR" name="S6_PIR" placeholder="e.g., 1.0 (unitless)" required>
+            </div>
+            <div class="mb-3">
+                <label for="S7_PIR" class="form-label">S7 PIR</label>
+                <input type="number" step="any" class="form-control" id="S7_PIR" name="S7_PIR" placeholder="e.g., 0.9 (unitless)" required>
+            </div>
+
+            <!-- Submit button -->
+            <button type="submit" class="btn btn-primary">Predict</button>
+        </form>
+
+        {% if prediction is not none %}
+            <div class="alert alert-info mt-3">
+                <strong>Predicted Room Occupancy Count:</strong> {{ prediction }}
+            </div>
+        {% endif %}
+
+        {% if mse is not none and mae is not none and r2 is not none %}
+        <div class="alert alert-secondary mt-3">
+            <h4>Model Performance Metrics</h4>
+            <p><strong>MSE:</strong> {{ mse }}</p>
+            <p><strong>MAE:</strong> {{ mae }}</p>
+            <p><strong>R²:</strong> {{ r2 }}</p>
+        </div>
+    {% endif %}
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
